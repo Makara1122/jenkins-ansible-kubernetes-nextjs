@@ -3,3 +3,9 @@ def runPlaybook(steps, String playbookPath, String inventoryPath, String ansible
     ansible-playbook -i ${inventoryPath} ${playbookPath} ${ansibleArgs}
     """
 }
+
+node {
+    stage('Deploy') {
+        runPlaybook(this, '/path/to/playbook.yml', '/path/to/inventory.ini')
+    }
+}
