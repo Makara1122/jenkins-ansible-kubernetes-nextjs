@@ -1,8 +1,14 @@
 package org.example
 
 class AnsibleHelper {
+    def steps
+
+    AnsibleHelper(steps) {
+        this.steps = steps
+    }
+
     def runPlaybook(String playbookPath, String inventoryPath, String ansibleArgs = '') {
-        sh """
+        steps.sh """
         ansible-playbook -i ${inventoryPath} ${playbookPath} ${ansibleArgs}
         """
     }
