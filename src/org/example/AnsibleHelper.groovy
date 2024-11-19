@@ -1,15 +1,7 @@
-package org.example
-
-class AnsibleHelper {
-    def steps
-
-    AnsibleHelper(steps) {
-        this.steps = steps
-    }
-
-    def runPlaybook(String playbookPath, String inventoryPath, String ansibleArgs = '') {
-        steps.sh """
-        ansible-playbook -i ${inventoryPath} ${playbookPath} ${ansibleArgs}
-        """
-    }
+def runPlaybook(String playbookName, String inventoryName, String ansibleArgs = '') {
+    def libraryPath = libraryResource("ansibleResources/${playbookName}")
+    def inventoryPath = libraryResource("ansibleResources/${inventoryName}")
+    sh """
+    ansible-playbook -i ${inventoryPath} ${libraryPath} ${ansibleArgs}
+    """
 }
