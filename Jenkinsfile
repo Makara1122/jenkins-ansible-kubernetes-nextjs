@@ -7,7 +7,7 @@ pipeline {
         stage('Test') {
             steps {
                 script {
-                    MyUtils.printMessage("Hello from Shared Library!")
+                    MyUtils.printMessage(this, "Hello from Shared Library!")
                 }
             }
         }
