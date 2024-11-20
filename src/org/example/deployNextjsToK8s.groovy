@@ -15,16 +15,20 @@ class DeployNextjsToK8s {
             """
             script.echo "Ansible playbook executed successfully."
 
-            // Step 2: Apply Kubernetes Deployment YAML
-            script.sh """
-                kubectl apply -f resources/deploy-nextjs/nextjs-deployment.yml
-            """
+            // Step 2: Apply Kubernetes Deployment YAML (with authentication)
+            script.withCredentials([file(credentialsId: 'kubeconfig-id', variable: 'KUBECONFIG')]) {
+                script.sh """
+                    kubectl apply -f resources/deploy-nextjs/nextjs-deployment.yml
+                """
+            }
             script.echo "Next.js deployment applied successfully in Kubernetes."
 
-            // Step 3: Apply Kubernetes Service YAML
-            script.sh """
-                kubectl apply -f resources/deploy-nextjs/nextjs-service.yml
-            """
+            // Step 3: Apply Kubernetes Service YAML (with authentication)
+            script.withCredentials([file(credentialsId: 'kubeconfig-id', variable: 'KUBECONFIG')]) {
+                script.sh """
+                    kubectl apply -f resources/deploy-nextjs/nextjs-service.yml
+                """
+            }
             script.echo "Next.js service created successfully in Kubernetes."
 
         } catch (Exception e) {
@@ -36,16 +40,20 @@ class DeployNextjsToK8s {
         script.echo "Cleaning up Kubernetes resources for Next.js application..."
 
         try {
-            // Step 1: Delete Kubernetes Deployment
-            script.sh """
-                kubectl delete -f resources/deploy-nextjs/nextjs-deployment.yml || true
-            """
+            // Step 1: Delete Kubernetes Deployment (with authentication)
+            script.withCredentials([file(credentialsId: 'kubeconfig-id', variable: 'KUBECONFIG')]) {
+                script.sh """
+                    kubectl delete -f resources/deploy-nextjs/nextjs-deployment.yml || true
+                """
+            }
             script.echo "Deleted Kubernetes deployment."
 
-            // Step 2: Delete Kubernetes Service
-            script.sh """
-                kubectl delete -f resources/deploy-nextjs/nextjs-service.yml || true
-            """
+            // Step 2: Delete Kubernetes Service (with authentication)
+            script.withCredentials([file(credentialsId: 'kubeconfig-id', variable: 'KUBECONFIG')]) {
+                script.sh """
+                    kubectl delete -f resources/deploy-nextjs/nextjs-service.yml || true
+                """
+            }
             script.echo "Deleted Kubernetes service."
 
         } catch (Exception e) {
