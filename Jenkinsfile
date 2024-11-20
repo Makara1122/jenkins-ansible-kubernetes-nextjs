@@ -1,5 +1,5 @@
 @Library('ansible-library') _
-import com.example.MyUtils
+import org.example.MyUtils
 
 pipeline {
     agent any
