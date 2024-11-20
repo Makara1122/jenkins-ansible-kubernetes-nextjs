@@ -1,7 +1,0 @@
----
-- name: Echo Task on Server
-  hosts: localhost
-  tasks:
-    - name: Echo a message
-      debug:
-        msg: "Hello from Jenkins using Ansible!"
