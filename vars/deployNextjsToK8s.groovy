@@ -1,62 +1,55 @@
-#!/usr/bin/env groovy
+package vars.ansibleResources
 
-// Declare the function for the Jenkins pipeline
-def call(String githubRepoUrl, String branch, String dockerImage, String kubeNamespace) {
-    pipeline {
-        agent any
-        
-       environment {
-    
-           DOCKER_IMAGE = "${dockerImage}"
-    
-           GITHUB_REPO = "${githubRepoUrl}"
-    
-           GIT_BRANCH = "${branch}"
-    
-           K8S_NAMESPACE = "${kubeNamespace}"
-           
-                    }
+import hudson.model.*
+import groovy.json.JsonSlurper
 
-        stages {
-            stage('Checkout') {
-                steps {
-                    // Clone the GitHub repository
-                    script {
-                        echo "Cloning GitHub repository..."
-                        checkout([$class: 'GitSCM', branches: [[name: "*/${GIT_BRANCH}"]], 
-                            userRemoteConfigs: [[url: "${GITHUB_REPO}"]]])
-                    }
-                }
-            }
+class DeployNextjsToK8s {
 
-            stage('Build Docker Image') {
-                steps {
-                    script {
-                        echo "Building Docker image for Next.js..."
-                        sh """
-                            docker build -t ${DOCKER_IMAGE} .
-                            docker push ${DOCKER_IMAGE}
-                        """
-                    }
-                }
-            }
+    def deploy(script) {
+        script.echo "Starting deployment of Next.js application using Ansible and Kubernetes..."
 
-            stage('Deploy to Kubernetes') {
-                steps {
-                    script {
-                        echo "Deploying Next.js project to Kubernetes..."
-                        // Call Ansible playbook for deployment
-                        ansiblePlaybook(
-                            playbook: 'ansible/deploy_nextjs.yml',
-                            inventory: 'ansible/inventory.ini',  // Assuming inventory file is in the repo
-                            extraVars: [
-                                k8s_namespace: K8S_NAMESPACE,
-                                docker_image: DOCKER_IMAGE
-                            ]
-                        )
-                    }
-                }
-            }
+        try {
+            // Step 1: Run Ansible Playbook
+            script.sh """
+                ansible-playbook -i vars/ansibleResources/inventory.ini vars/ansibleResources/play-book.yml
+            """
+            script.echo "Ansible playbook executed successfully."
+
+            // Step 2: Apply Kubernetes Deployment YAML
+            script.sh """
+                kubectl apply -f resources/deploy-nextjs/nextjs-deployment.yml
+            """
+            script.echo "Next.js deployment applied successfully in Kubernetes."
+
+            // Step 3: Apply Kubernetes Service YAML
+            script.sh """
+                kubectl apply -f resources/deploy-nextjs/nextjs-service.yml
+            """
+            script.echo "Next.js service created successfully in Kubernetes."
+
+        } catch (Exception e) {
+            script.error "Deployment failed: ${e.message}"
+        }
+    }
+
+    def cleanUp(script) {
+        script.echo "Cleaning up Kubernetes resources for Next.js application..."
+
+        try {
+            // Step 1: Delete Kubernetes Deployment
+            script.sh """
+                kubectl delete -f resources/deploy-nextjs/nextjs-deployment.yml || true
+            """
+            script.echo "Deleted Kubernetes deployment."
+
+            // Step 2: Delete Kubernetes Service
+            script.sh """
+                kubectl delete -f resources/deploy-nextjs/nextjs-service.yml || true
+            """
+            script.echo "Deleted Kubernetes service."
+
+        } catch (Exception e) {
+            script.error "Cleanup failed: ${e.message}"
         }
     }
 }
