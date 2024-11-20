@@ -20,19 +20,49 @@
 //         }
 //     }
 // }
-@Library('ansible-library') _
-import org.example.deployNextjsToK8s
+// @Library('ansible-library') _
+// import org.example.deployNextjsToK8s
 
+
+// pipeline {
+//     agent any
+
+//     stages {
+//         stage('Deploy Next.js') {
+//             steps {
+//                 script {
+//                     def deployer = new org.example.DeployNextjsToK8s()
+//                     deployer.deploy(this)
+//                 }
+//             }
+//         }
+
+//         stage('Clean Up (Optional)') {
+//             steps {
+//                 script {
+//                     def deployer = new  org.example.DeployNextjsToK8s()
+//                     deployer.cleanUp(this)
+//                 }
+//             }
+//         }
+//     }
+// }
+
+@Library('ansible-library') _
+import org.example.DeployNextjsToK8s
 
 pipeline {
     agent any
+    environment {
+        KUBECONFIG = credentials('kubeconfig-id')  // Using the credentials ID for kubeconfig
+    }
 
     stages {
         stage('Deploy Next.js') {
             steps {
                 script {
                     def deployer = new org.example.DeployNextjsToK8s()
-                    deployer.deploy(this)
+                    deployer.deploy(this)  // Passing the current pipeline context to the deploy method
                 }
             }
         }
@@ -40,27 +70,12 @@ pipeline {
         stage('Clean Up (Optional)') {
             steps {
                 script {
-                    def deployer = new  org.example.DeployNextjsToK8s()
-                    deployer.cleanUp(this)
+                    def deployer = new org.example.DeployNextjsToK8s()
+                    deployer.cleanUp(this)  // Passing the current pipeline context to the cleanUp method
                 }
             }
         }
     }
 }
 
-// @Library('ansible-library') _
-// import org.example.DeployNextjsToK8s
-
-// pipeline {
-//     agent any
-//     stages {
-//         stage('Library Test') {
-//             steps {
-//                 script {
-//                     echo "Shared Library Loaded Successfully"
-//                 }
-//             }
-//         }
-//     }
-// }
 
