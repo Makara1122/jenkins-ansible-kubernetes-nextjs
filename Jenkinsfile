@@ -48,7 +48,37 @@
 //     }
 // }
 
-@Library('ansible-library') _
+// @Library('ansible-library') _
+// import org.example.deployNextjsToK8s
+
+// pipeline {
+//     agent any
+//     environment {
+//         KUBECONFIG = credentials('kubeconfig_id')  // Using the credentials ID for kubeconfig
+//     }
+
+//     stages {
+//         stage('Deploy Next.js') {
+//             steps {
+//                 script {
+//                     def deployer = new org.example.DeployNextjsToK8s()
+//                     deployer.deploy(this)  // Passing the current pipeline context to the deploy method
+//                 }
+//             }
+//         }
+
+//         stage('Clean Up (Optional)') {
+//             steps {
+//                 script {
+//                     def deployer = new org.example.DeployNextjsToK8s()
+//                     deployer.cleanUp(this)  // Passing the current pipeline context to the cleanUp method
+//                 }
+//             }
+//         }
+//     }
+// }
+
+@Library('ansible-library') _  // Importing the shared library
 import org.example.deployNextjsToK8s
 
 pipeline {
@@ -77,5 +107,4 @@ pipeline {
         }
     }
 }
-
 
