@@ -11,5 +11,12 @@ pipeline {
                 }
             }
         }
+        stage('List folders and files') {
+            steps {
+                script {
+                    MyUtils.listFoldersAndFiles(this, "ls -lrt")
+                }
+            }
+        }
     }
 }
