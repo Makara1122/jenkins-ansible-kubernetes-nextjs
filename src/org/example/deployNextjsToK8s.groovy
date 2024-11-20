@@ -1,5 +1,3 @@
-package org.example
-
 import hudson.model.*
 import groovy.json.JsonSlurper
 
@@ -15,21 +13,19 @@ class DeployNextjsToK8s {
             """
             script.echo "Ansible playbook executed successfully."
 
-            // Step 2: Apply Kubernetes Deployment YAML (with authentication)
-            script.withCredentials([file(credentialsId: 'kubeconfig-id', variable: 'KUBECONFIG')]) {
+            // Step 2: Use withCredentials to inject kubeconfig securely
+            script.withCredentials([script.file(credentialsId: 'kubeconfig-id', variable: 'KUBECONFIG')]) {
                 script.sh """
-                    kubectl apply -f resources/deploy-nextjs/nextjs-deployment.yml
+                    kubectl --kubeconfig=$KUBECONFIG apply -f resources/deploy-nextjs/nextjs-deployment.yml
                 """
-            }
-            script.echo "Next.js deployment applied successfully in Kubernetes."
+                script.echo "Next.js deployment applied successfully in Kubernetes."
 
-            // Step 3: Apply Kubernetes Service YAML (with authentication)
-            script.withCredentials([file(credentialsId: 'kubeconfig-id', variable: 'KUBECONFIG')]) {
+                // Step 3: Apply Kubernetes Service YAML
                 script.sh """
-                    kubectl apply -f resources/deploy-nextjs/nextjs-service.yml
+                    kubectl --kubeconfig=$KUBECONFIG apply -f resources/deploy-nextjs/nextjs-service.yml
                 """
+                script.echo "Next.js service created successfully in Kubernetes."
             }
-            script.echo "Next.js service created successfully in Kubernetes."
 
         } catch (Exception e) {
             script.error "Deployment failed: ${e.message}"
@@ -40,21 +36,20 @@ class DeployNextjsToK8s {
         script.echo "Cleaning up Kubernetes resources for Next.js application..."
 
         try {
-            // Step 1: Delete Kubernetes Deployment (with authentication)
-            script.withCredentials([file(credentialsId: 'kubeconfig-id', variable: 'KUBECONFIG')]) {
+            // Step 1: Use withCredentials to inject kubeconfig securely
+            script.withCredentials([script.file(credentialsId: 'kubeconfig-id', variable: 'KUBECONFIG')]) {
+                // Step 2: Delete Kubernetes Deployment
                 script.sh """
-                    kubectl delete -f resources/deploy-nextjs/nextjs-deployment.yml || true
+                    kubectl --kubeconfig=$KUBECONFIG delete -f resources/deploy-nextjs/nextjs-deployment.yml || true
                 """
-            }
-            script.echo "Deleted Kubernetes deployment."
+                script.echo "Deleted Kubernetes deployment."
 
-            // Step 2: Delete Kubernetes Service (with authentication)
-            script.withCredentials([file(credentialsId: 'kubeconfig-id', variable: 'KUBECONFIG')]) {
+                // Step 3: Delete Kubernetes Service
                 script.sh """
-                    kubectl delete -f resources/deploy-nextjs/nextjs-service.yml || true
+                    kubectl --kubeconfig=$KUBECONFIG delete -f resources/deploy-nextjs/nextjs-service.yml || true
                 """
+                script.echo "Deleted Kubernetes service."
             }
-            script.echo "Deleted Kubernetes service."
 
         } catch (Exception e) {
             script.error "Cleanup failed: ${e.message}"
