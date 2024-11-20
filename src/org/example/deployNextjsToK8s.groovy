@@ -15,7 +15,7 @@ class DeployNextjsToK8s {
             script.echo "Ansible playbook executed successfully."
 
             // Step 2: Use withCredentials to inject kubeconfig securely
-            script.withCredentials([script.file(credentialsId: 'kubeconfig-id', variable: 'KUBECONFIG')]) {
+            script.withCredentials([script.file(credentialsId: 'kubeconfig_id', variable: 'KUBECONFIG')]) {
                 script.sh """
                     kubectl --kubeconfig=$KUBECONFIG apply -f resources/deploy-nextjs/nextjs-deployment.yml
                 """
