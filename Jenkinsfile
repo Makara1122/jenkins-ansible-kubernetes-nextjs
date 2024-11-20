@@ -20,30 +20,47 @@
 //         }
 //     }
 // }
+// @Library('ansible-library') _
+// import org.example.DeployNextjsToK8s
+
+
+// pipeline {
+//     agent any
+
+//     stages {
+//         stage('Deploy Next.js') {
+//             steps {
+//                 script {
+//                     def deployer = new org.example.DeployNextjsToK8s()
+//                     deployer.deploy(this)
+//                 }
+//             }
+//         }
+
+//         stage('Clean Up (Optional)') {
+//             steps {
+//                 script {
+//                     def deployer = new  org.example.DeployNextjsToK8s()
+//                     deployer.cleanUp(this)
+//                 }
+//             }
+//         }
+//     }
+// }
+
 @Library('ansible-library') _
 import org.example.DeployNextjsToK8s
 
-
 pipeline {
     agent any
-
     stages {
-        stage('Deploy Next.js') {
+        stage('Library Test') {
             steps {
                 script {
-                    def deployer = new org.example.DeployNextjsToK8s()
-                    deployer.deploy(this)
-                }
-            }
-        }
-
-        stage('Clean Up (Optional)') {
-            steps {
-                script {
-                    def deployer = new  org.example.DeployNextjsToK8s()
-                    deployer.cleanUp(this)
+                    echo "Shared Library Loaded Successfully"
                 }
             }
         }
     }
 }
+
