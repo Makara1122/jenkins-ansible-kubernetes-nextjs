@@ -1,4 +1,4 @@
-package vars.ansibleResources
+package org.example
 
 import hudson.model.*
 import groovy.json.JsonSlurper

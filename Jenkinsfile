@@ -21,6 +21,8 @@
 //     }
 // }
 @Library('ansible-library') _
+import org.example.DeployNextjsToK8s
+
 
 pipeline {
     agent any
@@ -29,7 +31,7 @@ pipeline {
         stage('Deploy Next.js') {
             steps {
                 script {
-                    def deployer = new vars.ansibleResources.DeployNextjsToK8s()
+                    def deployer = new org.example.DeployNextjsToK8s()
                     deployer.deploy(this)
                 }
             }
@@ -38,7 +40,7 @@ pipeline {
         stage('Clean Up (Optional)') {
             steps {
                 script {
-                    def deployer = new vars.ansibleResources.DeployNextjsToK8s()
+                    def deployer = new  org.example.DeployNextjsToK8s()
                     deployer.cleanUp(this)
                 }
             }
