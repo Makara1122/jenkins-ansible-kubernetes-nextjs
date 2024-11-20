@@ -1,3 +1,4 @@
+package com.example
 import hudson.model.*
 import groovy.json.JsonSlurper
 
