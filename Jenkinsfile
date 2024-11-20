@@ -49,7 +49,7 @@
 // }
 
 @Library('ansible-library') _
-import org.example.DeployNextjsToK8s
+import org.example.deployNextjsToK8s
 
 pipeline {
     agent any
