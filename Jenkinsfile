@@ -54,7 +54,7 @@ import org.example.DeployNextjsToK8s
 pipeline {
     agent any
     environment {
-        KUBECONFIG = credentials('kubeconfig-id')  // Using the credentials ID for kubeconfig
+        KUBECONFIG = credentials('kubeconfig_id')  // Using the credentials ID for kubeconfig
     }
 
     stages {
