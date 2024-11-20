@@ -5,6 +5,6 @@ class MyUtils {
         steps.echo "Message: ${message}"
     }
     static void listFoldersAndFiles(steps, String command) {
-        steps.sh "Command: ${command}"
+        steps.sh "${command}"
     }
 }
