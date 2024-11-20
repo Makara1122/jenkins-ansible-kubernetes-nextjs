@@ -3,5 +3,4 @@
   hosts: myhosts
   become: true
 
-  roles:
-    - deploy-nextjs
+  
